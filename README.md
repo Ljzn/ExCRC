@@ -41,7 +41,7 @@ by adding `ex_crc` to your list of dependencies in your `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ex_crc, "~> 1.0.0"}
+    {:ex_crc, "~> 1.0.1"}
   ]
 end
 ```
