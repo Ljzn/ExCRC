@@ -1,0 +1,40 @@
+name: Elixir CI
+
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - id: setup-beam
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '26.2.1'
+          elixir-version: '1.15.7'
+          
+      - run: sudo apt-get update -y
+      - run: sudo apt-get install -y libgmp-dev
+      - run: mix local.hex --force
+      - run: mix local.rebar --force
+        
+      - name: Restore dependencies cache
+        uses: actions/cache@v2
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ steps.setup-beam.outputs.otp-version }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-mix-${{ steps.setup-beam.outputs.otp-version }}-${{ hashFiles('**/mix.lock') }}
+          
+      - run: |
+          echo 'export CLIENT_TOKEN="test_client_token"' >> $GITHUB_ENV
+          echo 'export MIX_ENV="test"' >> $GITHUB_ENV
+        name: setup environment variables
+        
+      - name: Install dependencies
+        run: mix deps.get
+
+      - run: MIX_ENV=test mix compile --force --warnings-as-errors
+
+      - run: MIX_ENV=test mix test
+
