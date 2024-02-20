@@ -4,7 +4,7 @@ defmodule ExCRC.Mixfile do
   def project do
     [
       app: :ex_crc,
-      version: "1.0.0",
+      version: "1.0.1",
       elixir: "~> 1.5",
       description: description(),
       package: package(),
